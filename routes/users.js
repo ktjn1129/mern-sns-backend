@@ -9,7 +9,7 @@ router.put("/:id", async (req, res) => {
       const user = await User.findByIdAndUpdate(req.params.id, {
         $set: req.body,
       });
-      res.status(200).json("ユーザー情報が更新されました");
+      return res.status(200).json("ユーザー情報が更新されました");
     } catch (err) {
       return res.status(500).json(err);
     }
@@ -25,7 +25,7 @@ router.delete("/:id", async (req, res) => {
   if (req.body.userId === req.params.id || req.body.isAdimin) {
     try {
       const user = await User.findByIdAndDelete(req.params.id);
-      res.status(200).json("ユーザー情報が削除されました");
+      return res.status(200).json("ユーザー情報が削除されました");
     } catch (err) {
       return res.status(500).json(err);
     }
@@ -36,12 +36,17 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-//ユーザー情報の取得
-router.get("/:id", async (req, res) => {
+//クエリでユーザー情報を取得
+router.get("/", async (req, res) => {
+  const userId = req.query.userId;
+  const username = req.query.username;
   try {
-    const user = await User.findById(req.params.id);
+    const user = userId
+      ? await User.findById(userId)
+      : await User.findOne({ username: username });
+
     const { password, updatedAt, ...other } = user._doc;
-    res.status(200).json(other);
+    return res.status(200).json(other);
   } catch (err) {
     return res.status(500).json(err);
   }
