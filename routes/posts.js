@@ -67,13 +67,12 @@ router.put("/:id/like", async (req, res) => {
           likes: req.body.userId,
         },
       });
-      return res.status(200).json("投稿にいいねを押しました"); //投稿にすでにいいねが押されている場合
+      return res.status(200).json("投稿にいいねを押しました");
+      //投稿にすでにいいねが押されている場合
     } else {
       await post.updateOne({
         $pull: {
-          $pull: {
-            likes: req.body.userId,
-          },
+          likes: req.body.userId,
         },
       });
       return res.status(200).json("投稿からいいねを外しました");
